@@ -48,6 +48,10 @@ if __name__ == "__main__":
     vocab = {c:i for i,c in enumerate(all_words)}
 
     tokenizer = CustomTokenizer(vocab)
-    ids = tokenizer.encode("this is a test text")
-    print(tokenizer.decode(ids))
+    text1 = "let's try with this sentence first."
+    text2 = "she ran faster than she ever thought"
+    full_text = " <|endoftext|> ".join([text1, text2])
+    print(full_text)
+    ids = tokenizer.encode(full_text)
+    print(ids)
     
