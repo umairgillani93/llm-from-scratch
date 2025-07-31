@@ -1,5 +1,6 @@
 import os 
 import torch
+import torch.nn as nn
 from tokenizer import CustomTokenizer
 from torch.utils.data import Dataset, DataLoader
 from constants import vocab
@@ -27,33 +28,53 @@ class CustomDataset(Dataset):
         return self.input_ids[idx], self.target_ids[idx]
 
 
-def data_loader(txt, tokenizer, batch_size = 2, max_len = 4, stride = 1,
-        shuffle = True, drop_last = True, num_workers = 0):
-    dataset = CustomDataset(txt, tokenizer, max_len, stride)
-    print(dataset.__len__())
-    return DataLoader(
-            dataset,
-            batch_size = batch_size,
-            shuffle = shuffle,
-            drop_last = drop_last,
-            num_workers = num_workers)
+class LoadData:
+    def __init__(self):
+        pass
+    def data_loader(txt, input_ids, batch_size = 8, max_len = 4, stride = 1,
+            shuffle = True, drop_last = True, num_workers = 0):
+        dataset = CustomDataset(txt, tokenizer, max_len, stride)
+        print(dataset.__len__())
+        return DataLoader(
+                dataset,
+                batch_size = batch_size,
+                shuffle = shuffle,
+                drop_last = drop_last,
+                num_workers = num_workers)
     
+
+class EmbeddingLayer:
+    def __init__(self, vocab_size, emb_dim):
+        self.vocab_size = vocab_size
+        self.emb_dim = emb_dim
+        self.embedding = nn.Embedding(vocab_size, emb_dim)
+
+    def create_embedding(self, input_tensor):
+        return self.embedding(input_tensor)
+
 
 
 if __name__ == "__main__":
-    txt = """Artificial intelligence is transforming industries. 
-    From healthcare to finance, AI is revolutionizing how businesses operate. 
-    The future of AI promises even greater advancements. However, ethical considerations must be addressed."""
+    txt = """
+    “wait!” she screamed. “don’t go!” but he was already halfway out the door.
+#        She ran, faster than she ever thought possible, but stopped. Why?
+"""
     max_len = 3
     stride = 2
     tokenizer = CustomTokenizer(vocab)
-    data_loader = data_loader(
+    input_ids = tokenizer.encode(txt)
+    emb_dim = 13
+    vocab_size = len(vocab) 
+    ld = LoadData.data_loader(
             txt,
-            tokenizer
+            input_ids
             )
+    emb_layer = EmbeddingLayer(vocab_size, emb_dim)
+    for input_, target in ld:
+        print(f'input embeddings: {emb_layer.create_embedding(input_)}')
+        print(f'target embeddings: {emb_layer.create_embedding(target)}')
+        print("=============" * 10)
 
 
-    for input_, target in data_loader:
-        print(f'input: {input_}')
-        print(f'target: {target}')
+
 
