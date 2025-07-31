@@ -26,6 +26,20 @@ class CustomDataset(Dataset):
     def __getitem__(self, idx):
         return self.input_ids[idx], self.target_ids[idx]
 
+
+def data_loader(txt, tokenizer, batch_size = 2, max_len = 4, stride = 1,
+        shuffle = True, drop_last = True, num_workers = 0):
+    dataset = CustomDataset(txt, tokenizer, max_len, stride)
+    print(dataset.__len__())
+    return DataLoader(
+            dataset,
+            batch_size = batch_size,
+            shuffle = shuffle,
+            drop_last = drop_last,
+            num_workers = num_workers)
+    
+
+
 if __name__ == "__main__":
     txt = """Artificial intelligence is transforming industries. 
     From healthcare to finance, AI is revolutionizing how businesses operate. 
@@ -33,10 +47,13 @@ if __name__ == "__main__":
     max_len = 3
     stride = 2
     tokenizer = CustomTokenizer(vocab)
-    cd = CustomDataset(txt, tokenizer, max_len, stride)
-    print(f'type: {type(CustomDataset)}')
-    print(cd.__getitem__(3))
-    print(f'data length: {cd.__len__()}')
+    data_loader = data_loader(
+            txt,
+            tokenizer
+            )
 
 
+    for input_, target in data_loader:
+        print(f'input: {input_}')
+        print(f'target: {target}')
 
