@@ -1,0 +1,21 @@
+import os 
+from tokenizer import CustomTokenizer
+from torch.utils.data import Dataset, DataLoader
+
+# create your own Dataset class of the type torch Datset
+class CustomDataset:
+    def __inti__(self, txt, tokenizer, max_len, stride):
+        self.input_ids = []
+        self.target_ids = []
+
+        # gives the token ids
+        token_ids = tokenizer.encode(txt)
+
+        # create input-target pairs from token ids
+
+
+if __name__ == "__main__":
+
+    cd = CustomDataset()
+
+
