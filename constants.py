@@ -2,24 +2,17 @@ import os
 import sys
 import re
 
-text = """
-    “wait!” she screamed. “don’t go!” but he was already halfway out the door.
-    She ran, faster than she ever thought possible, but stopped. Why?
-    He wasn’t running from her. He was running to her.
-    “Are you—?” she gasped. “I thought you—”
-    He smiled, quietly, holding out a box. “It’s for you.”
-    She froze. “What is it?”
-    A ring. No words needed.
-    Her breath caught, and then—“Yes.”
-    They kissed, finally, with the whole world quiet around them.
-    And they lived happily ever after.
-"""
+
+with open('./text.txt', 'r') as f:
+    text = f.read()
 output = re.split(r'([,.:;?_!"()\']|--|\s)', text)
 output = [x.strip() for x in output if x.strip()]
 all_words = sorted(set(output))
 unk_tokens = ["<|unk|>", "<|endoftext|>"]
 all_words.extend(unk_tokens)
 vocab = {c:i for i,c in enumerate(all_words)}
+
+#print(len(vocab))
 
 #tokenizer = CustomTokenizer(vocab)
 #text1 = "let's try with this sentence first."
