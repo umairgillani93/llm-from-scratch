@@ -74,11 +74,3 @@ if __name__ == '__main__':
     x = torch.rand(1, 2, 3)
     ca = CausalAttention(3,2,3,0.5)
     print(ca.forward(x))
-            
-
-
-        
-
-
-
-
