@@ -1,5 +1,7 @@
 import torch
 
-vector = torch.randn(2, 3, 512)
-print(vector)
-print(vector.shape)
+x = torch.randn(4, 5)
+
+
+print(torch.pow(3, x))
+
