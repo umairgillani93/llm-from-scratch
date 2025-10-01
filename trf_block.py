@@ -8,7 +8,7 @@ from feed_forward_nn import FF
 from config import Config
 
 
-class TransformerModel(nn.Module):
+class TransformerBlock(nn.Module):
     def __init__(self, conf):
         super().__init__()
         self.att = MultiHeadAttention(
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     x = torch.randn(2, 4, 768)
     c = Config
     print(f'Model initializgin..')
-    tf_model = TransformerModel(c)
+    tf_model = TransformerBlock(c)
     print(f'Running forward pass..')
     block = tf_model(x)
     print(block)
