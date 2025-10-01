@@ -1,5 +1,5 @@
 '''
-Implementing DummpyChatGPT model
+Implementing gpt-2-124M style model
 '''
 import os 
 import sys 
@@ -8,8 +8,10 @@ import tiktoken
 import config
 import torch.nn as nn
 from torch.nn.utils.rnn import pad_sequence
+from trf_block import TransformerBlock
+from layer_norm import LayerNorm
 
-class DummyGptModel(nn.Module):
+class GptModel(nn.Module):
     def __init__(self, cfg):
         '''passing configuration file'''
         # inherit functions from base
@@ -23,11 +25,11 @@ class DummyGptModel(nn.Module):
         
         # stack the transformers blocks sequentially
         self.trf_block = nn.Sequential(
-                *[DummyTransformerBlock(cfg) for _ in range(cfg['num_layers'])]
+                *[TransformerBlock(cfg) for _ in range(cfg['num_layers'])]
                 )
 
         # Adding layer normalization to help with stable training.
-        self.final_norm = DummyLayerNorm(cfg['emb_dim'])
+        self.final_norm = LayerNorm(cfg['emb_dim'])
 
         # Final logits: defines the score for each word in vocab against each token
         self.out_head = nn.Linear(cfg['emb_dim'], cfg['vocab_size'], bias = False)
@@ -40,6 +42,9 @@ class DummyGptModel(nn.Module):
 
         batch_size, ctx_len = x.shape
         token_embedding = self.token_emb(x)
+
+        print(f'token embedding size: {token_embedding.shape}')
+
 
         # Define positional embeddings
         # Creates a tensor of 0 - seq_len - 1 and then passes to Embedding layer
@@ -57,19 +62,19 @@ class DummyGptModel(nn.Module):
         return logits
 
 
-class DummyTransformerBlock(nn.Module):
-    def __init__(self, cfg):
-        super().__init__()
-
-    def forward(self, x):
-        return x
-
-class DummyLayerNorm(nn.Module):
-    def __init__(self, normalized_shape, eps = 1e-5):
-        super().__init__()
-
-    def forward(self, x):
-        return x
+#class DummyTransformerBlock(nn.Module):
+#    def __init__(self, cfg):
+#        super().__init__()
+#
+#    def forward(self, x):
+#        return x
+#
+#class DummyLayerNorm(nn.Module):
+#    def __init__(self, normalized_shape, eps = 1e-5):
+#        super().__init__()
+#
+#    def forward(self, x):
+#        return x
     
 
 if __name__ == '__main__':
@@ -92,7 +97,9 @@ if __name__ == '__main__':
     print(f'batch type: {type(batch)}')
 
     GPT_CONFIG = config.Config
-    model = DummyGptModel(GPT_CONFIG)
+    model = GptModel(GPT_CONFIG)
+    num_params = sum(p.numel() for p in model.parameters())
+    print(f'Num of parameters: {num_params}')
 
 
     # logits
@@ -100,3 +107,4 @@ if __name__ == '__main__':
 
     print(f'logits: {logits}')
     print(logits.shape)
+
